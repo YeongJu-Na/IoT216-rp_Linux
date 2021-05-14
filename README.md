@@ -20,12 +20,7 @@
     - pi > Work파일 만들기 → /etc/samba로 이동 → nano smb.conf 입력 후 마지막에(nano ==> 편집기(vim도 있음))
     - 마지막에 아래 내용 입력 후 저장(ctrl+o) 후 나가기(ctrl+x)
     - --> shift + : ==> 맨 아래로, q!입력 시 저장없이 빠져나옴
-    - > [pi] 
-    - path=/home/pi/Work
-    - writeable=Yes
-    - > create mask=0777
-    - > directory mask=0777
-    - > public=no
+    - > [pi]   path=/home/pi/Work writeable=Yes create mask=0777 directory mask=0777   public=no
     - systemctl restart smbd (--> smbd의 d는 데몬)
     - 윈도우즈 파일탐색기에서 라즈비안 ip입력→ \\192.168.0.2(앞에 백슬래시 두개 필요)
   - >> 오류: failed to restart smbd.service unit not found 
