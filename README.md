@@ -25,7 +25,12 @@
     - 윈도우즈 파일탐색기에서 라즈비안 ip입력→ \\192.168.0.2(앞에 백슬래시 두개 필요)
   - >> 오류: failed to restart smbd.service unit not found 
     - sudo apt-get remove samba 후에 다시 깔기 → sudo apt-get install samba → restart 성공~!
-
+- Lect 2: gcc(GNU Compiler Collection)
+  - hello.c 파일 만들기 --> gcc -o hello hello.c
+    - 옵션: -o, output, hello.c 컴파일하여 실행파일 생성 
+    - ls -al해보면 녹색으로 hello파일 볼 수 있으며 기존 hello.c와 비교해서 x권한, 즉 실행 가능함이 
+  - hello실행시키기 --> ./hello 
+    - ./는 현재 경로로, 파일 실행시키기 위해서는 해당 파일 경로와 파일명을 함께 작성해야 함
 
 -------------
 - 리눅스 명령어
@@ -45,6 +50,7 @@
   - apt-get: 패키지 관리 명령어 도구
     - upgrade, install, remove
   - exit
+  - 버전 확인하기 ex) gcc -v  // gcc 컴파일러 버전 확인
 - 사용자 
   - $: 일반 유저
   - #: root권한
