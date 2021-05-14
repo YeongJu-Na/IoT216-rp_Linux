@@ -21,8 +21,8 @@
     - 마지막에 아래 내용 입력 후 저장(ctrl+o) 후 나가기(ctrl+x)
     - --> shift + : ==> 맨 아래로, q!입력 시 저장없이 빠져나옴
     - > [pi] 
-    - > path=/home/pi/Work
-    - > writeable=Yes
+    - path=/home/pi/Work
+    - writeable=Yes
     - > create mask=0777
     - > directory mask=0777
     - > public=no
