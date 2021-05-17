@@ -1,0 +1,137 @@
+#include <stdio.h>
+#include <malloc.h>
+#include <string.h>
+
+int chrFind(char *str, char c);
+int strLen(char *str);
+char* getToken(int idx, char *str,char deli);
+char **Split(char *str, char c);
+int chrCount(char *str, char chr);
+char * getToken2(int idx, char *str, char chr);
+
+int main()
+{
+	//printf("hello world");	
+	//int c = getchar();
+	//printf("you press [%c] key..",c);
+	/*
+	char buf[1000];
+	printf("Input output File name : test.txt");
+	
+	FILE *fp = fopen("test.txt","ab");
+	
+	while(1){
+		scanf("%s",buf);
+		if(buf[0]=='>') break;
+		fprintf(fp,"%s",buf);
+	}
+	
+	fclose(fp);
+	
+	char *s1 = "abcdefghijklmn";
+	
+	printf("Input search char: ");
+	char ch = getchar();
+	printf("%d\n",chrFind(s1,ch));
+	
+	char str[1000];
+	printf("전체 문자열을 입력하시오:");
+	scanf("%s",str);
+	getchar();	// 엔터키 제거
+	//char *str = "abc,def,gh";
+	printf("구분문자를 입력하시오:");
+	char deli = getchar();
+	getchar();	// 엔터키 제거
+	
+	printf("찾을 위치를 숫자로 입력하시오(0부터)");
+	int idx=0;
+	scanf("%d",&idx);
+	
+	printf("%s",getToken(idx,str,deli));
+	printf("\n");
+	*/
+//	Split("123,456",',');
+	printf("%s",getToken2(1,"123,456",','));
+	
+	return 0;
+	
+}
+
+//string GetToken(int idx, string str, char deli){
+//	return str.Split(deli)[idx];
+//}
+
+// 문자열 str에서 문자 c의 첫 번째 위치 반환
+int chrFind(char *str, char c){
+	for(int i=0;str[i];i++)  if(str[i]==c) return i;
+	return -1;
+	/*
+	int i=0;
+	while(*str){
+		if(*str++ == c) return i;
+		else i++;
+	}
+	return -1;*/
+}
+// 문자열의 개수
+int strLen(char *str){
+	int ret=0;
+	while(*str++) ret++;
+	return ret;
+}
+
+char *getToken(int idx, char *str,char deli){
+	int i=0;
+	int start = 0;
+	int end = 0;
+	// 반환할 문자열의 시작위치(start) 찾기
+	while(i++!=idx){
+		int next = chrFind(str+start,deli)+1;
+		if(next==0) return NULL;
+		start+=next;
+	}
+	// 반환할 문자열의 마지막 위치(end)
+	end = chrFind(str+start,deli);
+	if(end==-1) end=strLen(str+start);
+	
+	//for(int j=start;j<start+end;j++) printf("%c",*(str+j));
+	//printf("\n");
+	
+	char *ret = (char*)malloc(sizeof(char)*end);
+	for(int j=start;j<start+end;j++){
+		ret[j-start]=*(str+j);
+	}
+	return ret;
+}
+char * getToken2(int idx, char *str, char chr)
+{
+	char**ss = Split(str,chr);
+	return *(ss+idx);	
+}
+
+char **Split(char *str, char c){
+	
+	char *temp = (char*)malloc(strLen(str));
+	char **ret = malloc((chrCount(str,c)+1)*4);
+	//for(int i=0;str[i];i++) temp[i]=str[i];
+	strcpy(temp,str);
+	int i=1;
+	
+	*(ret+0) = temp;
+	while(*temp){
+		if(*temp == c){
+			*temp=0;
+			*(ret+i++) = temp+1;
+		}
+		temp++;
+	}
+	
+	return ret;
+}
+
+// 문자열 str에 포함된 chr 문자의 개수 반환
+int chrCount(char *str, char chr){
+	int i=0;
+	while(*str) if(*str++ == chr) i++;
+	return i;
+}
