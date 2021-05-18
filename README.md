@@ -40,6 +40,33 @@
   - VNC로 라즈베리파이 내부에 GetToken 함수만들기
     - char ** 
     - FILE*
+- Lect 4: getToken, makefile, wiringPi
+  - getToken
+    - 문자열 str을 deli로 구분하여 idx위치의 문자열 반환
+    - > 오류: 반환할 문자열을 담을 char *를 함수 내에서 malloc으로 생성 후 반환 시 null
+    - 지역변수라서 clear됨 → 매개변수에 결과를 담을 문자열 추가
+  - makefile 만드는 과정
+    - myHeader.h 파일 만들고 함수 프로토타입들 옮기기 → 기존hello.c에서 원형들 삭제 후 #include “myHeader.h” → 인용부호로 된 것은 시스템 제공 외 로컬 디렉토리 안에서 참조o
+    - usr폴더 > include디렉토리 > 이 안의 헤더 파일들(시스템헤더파일)을 <>로 include가능 
+    - myLib.c파일 생성 후 함수 정의한 것 옮기기+#include → 실행시 gcc -o hello hello.c myLilb.c
+    - makefile생성
+    - > CC = gcc   CFLAGS = -g   OBJS = hello.o myLib.o   TARGET = hello   hello : hello.o myLib.o   	$(CC) -o $@ $(OBJS)   hello.o : hello.c myHeader.h   myLib.o : myLib.c
+    - 저장 후 make명령 → ls -al 하면 .o파일 생성됨(makefile안에 clean레이블이 이런 중간 파일들 없애주는 역할)
+    - > clean :   $(RM) $(OBJS) $(TARGET) core   → make clean 
+  - make file: 파일관리 유틸리티, 파일 간의 종속관계 파악해서 Makefile(기술파일)에 적힌 대로 컴파일러에 명령
+    - --> SHELL 명령이 순차적으로 실행될 수 있게 함
+    - 대문자: macro
+    - CC: 컴파일러
+    - CFLAGS: 옵션
+    - 아래줄에서 $(macro명)
+    - “label :  “: 각각의 태그?
+    - --> $@: current target
+    - --> $^: output file구성 위한 목록들
+  - wiringPi.h
+    - wiringPiSetup()
+    - 
+    - digital
+    - gcc -o led LEDcontrol.c -lwiringPi  // -l: link옵션
 
 ---------------
 ### 이론
