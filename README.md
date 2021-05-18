@@ -52,7 +52,7 @@
     - gcc -o, *.o
   - 링킹 단계: 목적 파일 엮어서 하나의 실행 파일로(.o)
     - 바이너리 파일
-    - executable object program
+  - executable object program
 - GCC(GNU C Compiler)
   - 어셈블리 단계와 링킹 단계
   - --help: 
