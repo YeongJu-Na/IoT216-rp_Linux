@@ -1,0 +1,62 @@
+////////////////////////////////////////////////////////// myLib.c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "myHeader.h"
+
+char * getToken(int idx, char *str,char deli, char *buf){
+	int i=0;
+	int start = 0;
+	int end = 0;
+	// 반환할 문자열의 시작위치(start) 찾기
+	while(i++!=idx){
+		int next = chrFind(str+start,deli)+1;
+		if(next==0) return NULL;
+		start+=next;
+	}
+	// 반환할 문자열의 마지막 위치(end)
+	end = chrFind(str+start,deli);
+	if(end==-1) end=strLen(str+start);
+	
+	strncpy(buf,str+start,end);
+	buf[end]=0;
+	return buf;
+	//for(int j=start;j<start+end;j++) printf("%c",*(str+j));
+	//printf("\n");
+	//char *ret = (char*)malloc(sizeof(char)*end);
+//	for(int j=start;j<start+end;j++){
+		//ret[j-start]=*(str+j);	
+//	}
+//	return ret;
+}
+
+////////////////////////////////////////////////////////// LEDcontrol.c
+#include <stdio.h>
+#include <wiringPi.h>
+
+int main()
+{
+	wiringPiSetup();
+	
+	pinMode(8,OUTPUT);
+	
+	int op = 0;
+	while(1){
+		char c = getchar();
+		if(c=='\n'){
+			op=!op;
+			if(op) digitalWrite(8, HIGH);	// Low
+			else digitalWrite(8,LOW);
+		}
+	}
+	/*
+	int i=0;
+	while(1){
+		getchar();
+		if(i%2==0) digitalWrite(8,HIGH);
+		else digitalWrite(8,LOW);
+		i++;
+	}
+	*/
+	return 0;
+}
