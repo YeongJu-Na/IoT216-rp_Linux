@@ -1,5 +1,5 @@
 # IoT216-rp_Linux
-### 수업 내용 정리
+### 실습 내용
 - Lect 1, 2: 라즈베리파이 시작하기
   - sd카드 포맷
   - raspbian(raspberry Pi OS) 다운 → sd카드에 os porting, rasperry pi에 삽입
@@ -41,12 +41,18 @@
     - char ** 
     - FILE*
 
--------------
+---------------
+### 이론
 - 컴파일 과정
-  - 전처리 단계
-  - 컴파일 단계
-  - 어셈블리 단계
-  - 링킹 단계
+  - 전처리 단계: #으로 시작하는 지시자 처리(.c)
+  - 컴파일 단계: 어셈블리어로 (.i)
+  - 어셈블리 단계: 쪼개서 instruction단위로 만들어 모아 재배치 가능한 목적 프로그램 단위로 (.s)
+    - 재배치 가능 = 링커를 통해 다른 목적파일들과 결합 가능 의미
+    - 바이너리 파일 생성 
+    - gcc -o, *.o
+  - 링킹 단계: 목적 파일 엮어서 하나의 실행 파일로(.o)
+    - 바이너리 파일
+    - executable object program
 - GCC(GNU C Compiler)
   - 어셈블리 단계와 링킹 단계
   - --help: 
@@ -73,6 +79,46 @@
     - >: 명령의 결과를 파일로 저장
     - >>: 명령 결과를 파일에 추가
     - <: 파일의 데이터를 명령에 입력
+  - ".": 현재 디렉토리
+  - "..": parent directory, 상위 디렉토리
 - 사용자 
   - $: 일반 유저
   - #: root권한
+------------
+### C언어
+- #include <conio.h> 유닉스에서x → key event x 
+    - 한사람이 키보드를 독점하는 이벤트 사용 불가, 유닉스 멀티 유저 기반? 이므로
+    - getch()대신 표준함수인 getchar()써야
+- FILE *fp = fopen(“test.txt”,”ab”);
+    - 파일 다루는데 익숙해져야
+    - FILE *fp  = fopen(“파일명(파일경로)”,”옵션”);
+  - 옵션
+    - a옵션: append(기존에 있으면 추가, 없으면 생성해서 추가)
+    - b옵션: binary형태의 데이터형태(없는 것과 차이는 \n처리만 차이)
+  - fscanf, fprintf: scanf, printf 사용법과 동일하나, 파일 포인터 매개변수만 추가하면 됨 
+    - fprintf(fp,”%s”,buf); 파일로 내보냄 / fscanf(fp,”%s”,str); 파일 내용 받아옴
+  - fclose(fp);  // 반드시 닫아줘야
+- c와 c# 차이 
+    - c#에서 while 안에는 bool, c는 0외 숫자(true)/ 0(false)도 가능 
+    - c#에서는 null → c에서는 NULL
+    - c는 함수 이름 같은거 하나만 가능(함수 오버로드x) → EX, EX1, `~~
+- <string.h>
+    - strlen함수
+    - strcpy함수
+    - strncpy → strcpy에 복사할 길이(사이즈) 인수 하나 더
+    - → 복사한 문자열 마지막에 null(0)처리 안함 → 별도로 해줘야
+- ** : 포인터의 포인터 
+- 문자열
+    - char[] → 괄호 안에 반드시 상수써야
+    - char 무조건 1byte, 한글은 2byte, 문자열 끝에 반드시 null → split시 사용
+- malloc: memory allocation
+  - free
+    - 메모리 누수 발생 가능성: free(메모리 개방)
+    - 쓰고 안닫으면? segmentation error → 그냥 모든 ㅇㅔ러인가?
+  - size
+    - default는 1바이트 = 1 char(1byte)
+    - char** ar2 = malloc(cnt(str)*sizeof(char*));	// 포인터 변수의 크기(32bit면 4바이트)
+  - stack 영역 x→ data영역차지(시스템 종료 후에도 남아 있으니 free해야한다)
+    - ⇒ 코드영역과 스택영역은 로컬 데이터 공유
+- 사용자 정의 함수에서 만든 지역변수를 리턴 → stack영역(재사용영역)
+    - 리턴 시, clear되서 null됨
