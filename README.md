@@ -64,8 +64,8 @@
     - --> $^: output file구성 위한 목록들
   - wiringPi.h
     - wiringPiSetup()
-    - 
-    - digital
+    - pinMode(wPi번호,OUTPUT)
+    - digitalWrite(wPi번호, HIGH/LOW)
     - gcc -o led LEDcontrol.c -lwiringPi  // -l: link옵션
 
 ---------------
