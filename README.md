@@ -67,6 +67,29 @@
     - pinMode(wPi번호,OUTPUT)
     - digitalWrite(wPi번호, HIGH/LOW)
     - gcc -o led LEDcontrol.c -lwiringPi  // -l: link옵션
+- Lect 5: ADC/DAC(YL-40)모듈(PCF8591T)- 조도센서(R7), 온도센서(R6), 가변 저항(volumn)
+  - 사용
+    - raspberry pi configuration > i2c: enable로 > reboot
+  - wiringPiI2C.h include
+  - wiringPii2CSetup(i2c주소);		// wiringPiI2CSetup(0x48);
+    - 주소찾기:  i2cdetect -y 1명령- 6050컨트롤러의 i2c주소 (x축은 16진수, y축은 8개(00~70))
+    - I2C모듈의 Handle을 반환  // int hndl = wiringPi~~
+  - wiringPiI2CWrite(hndl, 채널 번호);
+    - 채널 번호: 0-조도센서, 1-온도센서, 2-AIN2(연결 없는 채널), 3-가변 저항 (AIN: Analog INput)
+    - AIN2에 다른 아날로그 센서 결과 연결해서 사용
+  - float a = wiringPiI2CRead(hndl);
+    - write, read 1번 씩 수행해서 ch초기화 → 실제로는 read를 2번이상 해야할때도
+  - 실행: gcc -o test test.c -lwiringPi
+  - 채널 값 바꾸기: argv[1]에 값 넣어서 실행 가능
+    - 메인 함수의 원형: int main(int argc, char *argv[])
+    - GUI에서는 super user될 수 없음 --> CLI에서는 가능
+    - argc: argument count
+    - gcc -o test test.c 1  // argv[1]=1, 실행
+    - argv[0]: 실행 파일 명, argv[1]~
+  - 실습 2: 조도 센서 값에 따라 일정값(ex. 100)이상이면 led ON
+    - led는 다른 GPIO포트에 연결 후, 어제 실습한 내용에서 wPi번호만 대체
+    - > 저항 560옴으로 조도 센서 구성 --> 저항값이 너무 작아 센서 결과 너무 크게 나옴 --> 모두 255로
+    - --> 더 큰 저항으로 대체
 
 ---------------
 ### 이론
@@ -83,6 +106,14 @@
 - GCC(GNU C Compiler)
   - 어셈블리 단계와 링킹 단계
   - --help: 
+- I2C: Inter Integrated Circuit
+  - sda, scl 두 신호선으로 다수의 I2C통신을 지원하는 디바이스와 데이터를 송수신할 수 있는 통신 방식
+    - IC들 간의 데이터 통신을 목적으로 하는 통신 방식
+  - 하나의 마스터와 다수의 슬레이브로 연결 구성됨 → 마스터에서 기준클럭(scl)을 생성, 클럭에 맞춰 데이터(sda)를 전송 및 수신 ⇒serial clock, serial data
+  - 각 송수신은 구분되어있는(동시 불가) 반이중(half-duplex)
+  - I2C인터페이스: 라즈베리파이의 GPIO는 디지털 입출력만 가능
+    - 아날로그 신호원의 디바이스는 ADC필요
+    - 시작조건: scl-high, sda-high→ low / 종료조건: scl-high, sda-low→ high
 
 - 리눅스 명령어
   - cd: change directory, 디렉토리 이동
@@ -108,6 +139,10 @@
     - <: 파일의 데이터를 명령에 입력
   - ".": 현재 디렉토리
   - "..": parent directory, 상위 디렉토리
+  - find: ex) strcmp함수가 선언된 헤더파일 찾기
+    - 헤더파일이 모인 폴더로 이동: cd /usr/include
+    - find / *.h | grep -r strcmp
+    - 해당 결과에서 extern인 위치 찾기 --> strcmp 선언부
 - 사용자 
   - $: 일반 유저
   - #: root권한
