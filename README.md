@@ -137,8 +137,6 @@
     - >: 명령의 결과를 파일로 저장
     - >>: 명령 결과를 파일에 추가
     - <: 파일의 데이터를 명령에 입력
-  - ".": 현재 디렉토리
-  - "..": parent directory, 상위 디렉토리
   - find: ex) strcmp함수가 선언된 헤더파일 찾기
     - 헤더파일이 모인 폴더로 이동: cd /usr/include
     - find / *.h | grep -r strcmp
