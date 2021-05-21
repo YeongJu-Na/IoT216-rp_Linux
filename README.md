@@ -90,6 +90,22 @@
     - led는 다른 GPIO포트에 연결 후, 어제 실습한 내용에서 wPi번호만 대체
     - >> 저항 560옴으로 조도 센서 구성 --> 저항값이 너무 작아 센서 결과 너무 크게 나옴 --> 모두 255로
     - --> 더 큰 저항으로 대체
+- Lect 6. softPWM, ultraSonic Sensor
+  - softPwm.h
+  - softPwmCreate(int pin, int value, int range): value=초기값, range=듀티비(0~100(%))
+  - softPwmWrite ==> for(int i=0;i<pwmRange;i++) softPwmWrite(pNo, i);
+    - > for루프 너무 빨라서 soft dimming up힘듦 --> 루프 내에서 매번 delay필요 --> 약 delay(20)줌
+    - > i2c(Lect 5)에 적용 시, led꺼진 상태에서 또 threshold보다 작은 값이면 다시 켜졌다가 꺼짐(dimming down)
+    - --> 현재 조도 값(val)말고 그 이전의 조도값(prev)변수 추가해서 제어
+  - 초음파를 이용한 거리 센서
+  - 초음파(ultrasonic): 가청주파수를 넘는 주파수
+    - 소리의 전달 속도: 340m/s
+  - 센서 원리: 모듈에 DC인가, Trig핀을 통해 신호 펄스 인가 시, 센서에서 음파 신호 발사 후 되돌아온 신호를 Echo를 통해 전달 받음
+    - 신호 발사 ~ Echo로 돌아오기까지 시간을 통해서 거리 계산
+  - 센서: HC-SR04
+    - Trig핀을 통해 10us의 펄스 인가하면 센서는 8개의 40kHz 펄스를 발생시킴
+    - 측정된 거리에 따라 150us~25ms 의 펄스를 Echo핀을 통해 출력 시킴
+    - 측정 거리 계산 Echo핀 출력 시간(us) * 0.17 = 거리(mm)
 
 ---------------
 ### 이론
@@ -114,7 +130,11 @@
   - I2C인터페이스: 라즈베리파이의 GPIO는 디지털 입출력만 가능
     - 아날로그 신호원의 디바이스는 ADC필요
     - 시작조건: scl-high, sda-high→ low / 종료조건: scl-high, sda-low→ high
-
+- PWM(pulse width modultaion)
+  - 스위치 on/off위한 신호의 패턴
+    - ex) 차량의 인버터, 차량의 모터는 공급받는 전류의 주파수와 크기로 회전 속도와 토크 조절 가능→ 운전하려면 원하는 f와 크기의 교류 전원 필요 ==> 인버터는 스위치 on/off동작으로 베터리에서 받은 직류를 교류로 바궈줌
+  - duty Cycle: 신호 1(high)와 0(low)의 비율
+- VDD: Drain, VCC: Collector
 - 리눅스 명령어
   - cd: change directory, 디렉토리 이동
     - ~: 홈디렉토리로 바로 이동 --> cd ~
