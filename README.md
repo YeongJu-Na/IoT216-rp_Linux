@@ -11,8 +11,11 @@
     - wifi모양 우클릭 > wireless설정> ipv4주소: 확인한 ip번호 입력, router: gateway(192.168.0.1) ⇒ reboot
     - 윈도우즈에서 ping ip주소 --> 해당 ip 도달 가능여부 확인
   - 입출력 장치 해제, 윈도우즈로, vnc뷰어 설치 →확인한 IP주소입력, username:pi, ps:raspberry →pc에서 원격접속
-  - sudo apt-get update/ upgrade ⇒ 한글 입출력 모듈 설치 (ibus), 폰트 설치
-  - >> 한글 오류: raspberry pi configuration> localisation> locale > 언어를 영어(en), us, utf-8
+  - sudo apt-get update/ upgrade
+  - 한글 사용하기
+    - 한글 입출력 모듈 설치 (ibus): sudo apt-get install ibus ibus-hangul
+    - 폰트 설치: menu(라즈베리모양) > preferences > add/remove software
+    - >> 한글 오류: raspberry pi configuration> localisation> locale > 언어를 영어(en), us, utf-8
   - samba설치 및 설정 ⇒ pc에서 NFS사용 위함 ==> Network File System
     - samba설치: sudo apt-get install samba-common-bin 
     - root권한으로 설정하기 : sudo passwd> 새 암호 설정 → su입력 후 새 암호 입력
