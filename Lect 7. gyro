@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <wiringPi.h>
+#include <wiringPiI2C.h>
+
+short i2cInt16(int hndl, int addr);
+
+int main(){
+	
+	int i2cAddr = 0x68;
+	int bufAddr = 0x3b;		// 데이터(메모리블록)
+	int pwrAddr = 0x6b;
+	
+	wiringPiSetup();
+	int hndl = wiringPiI2CSetup(i2cAddr);
+	
+	wiringPiI2CWriteReg8(hndl, pwrAddr, 0);
+	
+	double x1,y1,z1,x2,y2,z2;
+	
+	while(1)
+	{
+		x1 = i2cInt16(hndl, bufAddr)/16384.;    // .안붙이면 연산 결과도 int타입이 됨
+		y1 = i2cInt16(hndl, bufAddr+2)/16384.;
+		z1 = i2cInt16(hndl, bufAddr+4)/16384.;
+		x2 = i2cInt16(hndl, bufAddr+8)/131.;	  // +6은 온도
+		y2 = i2cInt16(hndl, bufAddr+10)/131.;
+		z2 = i2cInt16(hndl, bufAddr+12)/131.;
+		
+		printf("x1=%f, y1=%f, z1=%f || x2=%f, y2=%f, z2=%f\n",x1,y1,z1,x2,y2,z2);
+	}	
+	return 0;
+}
+// 8비트씩 읽고 16비트로 만들어 반환
+short i2cInt16(int hndl, int addr){
+	short d1 = wiringPiI2CReadReg8(hndl, addr);	// 1byte읽기
+	short d2 = wiringPiI2CReadReg8(hndl, addr+1);
+	short d3 = (d1 << 8) | d2;	// |d1|d2|
+	return d3;
+}
