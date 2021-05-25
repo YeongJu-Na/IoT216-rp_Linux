@@ -72,7 +72,7 @@ int main(){
 
 int main(){
 	
-	int wTrig = 15;
+	int wTrig = 15;		//#define U_SON_TRIG=15; // include문 아래 
 	int wEcho = 16;
 	
 	wiringPiSetup();
@@ -90,11 +90,13 @@ int main(){
 		// delay(0.001)	// 안됨
 		delayMicroseconds(10);
 		digitalWrite(wTrig,LOW);  // 10us 의 트리거 신호
+		
 		delayMicroseconds(200);	  // 실제 신호 발사까지 지연 시간
 		
 		// dedicated모드로 신호 low 기다려야
 		while(digitalRead(wEcho) == LOW);	// until high
 		long start = micros();	// 현재 시간의 마이크로초 단위 count
+		
 		// dedicated모드로 신호 올 때까지 기다려야
 		while(digitalRead(wEcho) == HIGH);  // until low
 		long end = micros();
