@@ -1,0 +1,54 @@
+///////////////////////////// usLED.c
+#include <stdio.h>
+#include <stdlib.h>
+#include <wiringPi.h>
+
+int main(){
+	int wTrig = 15;
+	int wEcho = 16;
+	
+	int leds[] = {3,2,0};	// led핀 번호-> red: 0, yellow: 1, green: 2
+	
+	wiringPiSetup();
+	pinMode(wTrig,OUTPUT);
+	pinMode(wEcho,INPUT);
+	for(int i=0;i<3;i++) pinMode(leds[i],OUTPUT);
+	
+	while(1){
+		int op = getchar();
+		if(op=='\n'){
+			for(int i=0;i<3;i++) digitalWrite(leds[i],LOW);
+			break;
+		}
+		digitalWrite(wTrig, LOW);
+		delayMicroseconds(100);
+		
+		digitalWrite(wTrig, HIGH);
+		delayMicroseconds(10);
+		
+		digitalWrite(wTrig, LOW);
+		delayMicroseconds(200);
+		
+		while(digitalRead(wEcho)==LOW);
+		long start = micros();
+		
+		while(digitalRead(wEcho)==HIGH);
+		long end = micros();
+		
+		double dist = (end-start)*0.17;
+		int turnOn = -1;
+		
+		if(dist>=500) turnOn = 2;
+		else if(dist>=200) turnOn = 1;
+		else turnOn=0;
+		
+		for(int i=0;i<3;i++){
+			if(i==turnOn) digitalWrite(leds[i],HIGH);
+			else digitalWrite(leds[i],LOW);
+		}
+		printf("%f\n",dist);
+		delay(1000);
+	}
+	
+	return 0;
+}
