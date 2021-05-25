@@ -106,10 +106,28 @@
   - 센서 원리: 모듈에 DC인가, Trig핀을 통해 신호 펄스 인가 시, 센서에서 음파 신호 발사 후 되돌아온 신호를 Echo를 통해 전달 받음
     - 신호 발사 ~ Echo로 돌아오기까지 시간을 통해서 거리 계산
   - 센서: HC-SR04
+    - 5V DC인가
     - Trig핀을 통해 10us의 펄스 인가하면 센서는 8개의 40kHz 펄스를 발생시킴
     - 측정된 거리에 따라 150us~25ms 의 펄스를 Echo핀을 통해 출력 시킴
     - 측정 거리 계산 Echo핀 출력 시간(us) * 0.17 = 거리(mm)
     - 8개의 40kHz 펄스 발생시킴 --> trig핀으로 신호 인가 후, 실제 센서가 신호 보낼 시간만큼 기다려야 25us*8(200us)만큼 delay
+- Lect 7: gyroSensor
+  - 핀 연결: vcc, gnd, sda(GPIO2-핀넘버 8), scl(GPIO3-핀넘버, 5)
+  - 변수 선언
+    - i2cAddr: i2cdetect -y 1 ⇒ 주소(68)확인
+    - buf 주소: 우리가 관심있는 메모리 블록의 시작 위치
+    - pwr주소(power management address)
+  - 초기화
+    - extern int wiringPiI2CWriteReg8(int fd, int reg, int data) ;  // 다음은 bufAddr+2
+    - → wiringPiI2CWriteReg8(hndl, pwrAddr, 0);
+  - 데이터 읽기(16비트)
+    - int x1 = wiringPiI2CReadReg16(hndl, bufAddr+2)/16384; --> (x)
+    - > endian → big/small endian, cpu, os아키텍처 상 16비트 단위로 한번에 읽어올 수 없다
+    - → 8비트씩 읽고 첫 8비트 데이터를 << 8 해서 16비트 중 상위 8비트로 이동 후 다음 8비트 데이터를 or연산으로 붙임
+    - → 그 결과는 2byte이므로 short타입으로 반환 (int:4byte, short: 2byte)(음수판단위해)
+    - 각속도 x축값: double x1 = (short타입 반환값)/16384.; // 가속도 값은 /131.
+    - → 나누는 값에 “.”붙여야 소수점(double)형태로 값 반환됨
+
 ---------------
 ### 이론
 - 컴파일 과정
@@ -137,6 +155,17 @@
   - 스위치 on/off위한 신호의 패턴
     - ex) 차량의 인버터, 차량의 모터는 공급받는 전류의 주파수와 크기로 회전 속도와 토크 조절 가능→ 운전하려면 원하는 f와 크기의 교류 전원 필요 ==> 인버터는 스위치 on/off동작으로 베터리에서 받은 직류를 교류로 바궈줌
   - duty Cycle: 신호 1(high)와 0(low)의 비율
+- *mpu6050* - 자이로센서
+  - 기능
+    - - gyroscope: 회전 방향(x,y,z)으로 각속도 : 단위 시간동안 몇도 회전하는지 (degree/sec) --> 자세제어
+    - accelerometer: 가속도계 - 중력가속도(g)(9.8N/s)
+    - temperature
+  - I2C 인터페이스
+  - 가져오는 데이터: 각속도(x,y,z), 가속도(x,y,z)
+    - 메모리블록 형태로 데이터 제공 --> 이전에 YL-40 모듈은 채널 형태
+    - --> 읽을 때 1Byte씩 2Byte가 하나의 축 값
+    - accelerometer raw data / 16384	// 65536=2^16, 16384=2^14, 즉 유효 자릿수가 14비트
+    - gyroscope raw data/131
 - VDD: Drain, VCC: Collector
 - 리눅스 명령어
   - cd: change directory, 디렉토리 이동
