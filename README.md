@@ -152,8 +152,11 @@
   - pwd: print work directory, 현재 작업 중인 디렉터리 표시
   - cat: concatenate파일 내용 화면에 출력하거나 파일 만드는 명령어
   - sudo: su(super user), 권한이 없는 사용자는 낮은 수준의 권한이 필요한 파일에 액세스, 수정 가능
-  - apt-get: 패키지 관리 명령어 도구
-    - upgrade, install, remove
+  - apt-get: advanced packaging tool, 패키지 관리 명령어 도구
+    - update: os에서 사용가능한 패키지들과 그 버전에 대한 정보를 업데이트하는 명령어--> 설치가능한 리스트 업데이트
+    - install: 특정 패키지를 설치할 수 없는 경우, 최신으로 패키지 리스트 업데이트
+    - upgrade: os에 apt-get install 명령으로 설치한 패키지들을 최신 버전으로 업그레이드
+    - remove
   - exit
   - 버전 확인하기 ex) gcc -v  // gcc 컴파일러 버전 확인
   - - redirection: 리눅스 스트림의 방향 조정 (stream개념 확실히 잡아야- c/c++에서 stdin, stdout)
