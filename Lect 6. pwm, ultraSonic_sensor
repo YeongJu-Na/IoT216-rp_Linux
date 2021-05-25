@@ -72,7 +72,7 @@ int main(){
 
 int main(){
 	
-	int wTrig = 15;		//#define U_SON_TRIG=15; // include문 아래 
+	int wTrig = 15;
 	int wEcho = 16;
 	
 	wiringPiSetup();
