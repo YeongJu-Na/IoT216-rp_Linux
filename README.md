@@ -131,6 +131,41 @@
 - Lect 8: 초음파 센서
   - 장애물 거리에 따라 다른 색의 LED ON
     - LED는 서로 다른 GPIO에 연결, 각 led wPI를 배열로 
+- Lect 9: 소켓 통신 - 라즈베리파이 센서 정보 전송( direct communication(직접 소켓을 이용))
+  - 헤더   
+    - sys/socket.h : BSD소켓의 핵심 함수와 데이터 구조
+    - arpa/inet.h: 프로토콜 및 호스트 이름을 숫자 주소로 변환→ 로컬데이터와 dns검색
+  - 변수
+    - 전송할 위치의 ip, port 변수 
+    - struct sockaddr_in socketinfo;	//sockaddr_in: AF_INET일때 사용하는 소켓 주소 정보
+    - 전송을 위한 버퍼: char buf[1024];
+    - socket핸들 : int sock =socket(AF_INET, SOCK_STREAM,0);
+    - →  스트림 방식으로 인터넷 망에 접속하기 위한 소켓을 생성
+  - bind
+    - address family→ AF_INET   // 주소체계로서 ipv4를 사용하는 인터넷 망에 접속
+    - ip→ inet_pton(): // 사람이 알아보기 쉬운 텍스트형태의 ip 주소를 binary 형태로 변환
+    - → %socknfo.sin_addr.s_addr
+    - port → htons(): unsigned short형의 Endian변환
+  - connect : connect(sock, (struct sockaddr*)&sockinfo, sizeof(sockinfo));
+  - send: send(sock, buf, strlen(buf),0)
+  - receive: recv(sock,buf,1024,0);	// blocking, null못넣어?
+  - close: close(sock);
+  - 이전에 작성한 winform server 실행 및 전송 실습
+    - winform에 auto ack이름의 checkbox생성(체크 시, 라즈베리로부터 받을 때마다 ack전송)
+  - recv(block) → nonblock으로(windows 는 blocking동안 아무것도 못함 → linux는 키보드나 모두 가능(멀티 유저용이므로))
+    - fntl.h- 열려진 파일의 속성을 가져오거나 설정
+    - F_SETFL: 파일 상태 속성들을 세 번째 인수로 받아 설정
+    - → flag | O_NONBLOCK 
+  - 초음파센서값 winform으로 전송하기
+    - sprintf: 버퍼 출력(string 출력) → double 타입의 센서값 → char*buf 로 넣고 send하기 
+  - 스레드: pthread.h → recv부분을 스레드로 구현하기
+    - linux는 멀티유저기반으로 굳이 스레드 많이 스진 않음
+    - Linux에서는 스레드에 등록될 함수에 규칙 있음 → 포인터타입 반환해야
+    - pthread_create(&readThread(스레드명), NULL, readProc(함수),NULL)
+    - → 이전 c# 실습과 달리 리눅스에서 스레드는 생성(new thread())과 동시에 실행(thread.Start())
+    - pthread_join: 종료, 스레드 종료까지 기다림
+    - 스레드 실행 시, -lpthread도 있어야→ gcc -o tcp tcp.c -lwiringPi -lpthread
+
 ---------------
 ### 이론
 - 컴파일 과정
@@ -198,6 +233,9 @@
   - find: ex) strcmp함수가 선언된 헤더파일 찾기
     - 헤더파일이 모인 폴더로 이동: cd /usr/include
     - find / *.h | grep -r strcmp
+    - -> grep: 입력으로 전달된 파일 내용에서 특정 문자열 찾을 때 사용
+    - --> 단순히 문자열 같은지(equal)만 판단하지 않고, 정규 표현식에 의한 패턴 매칭 방식 사용 --> 복잡, 다양, 효율적으로 문자열 찾음
+    - 옵션: -r: 하위 디렉토리 탐색
     - 해당 결과에서 extern인 위치 찾기 --> strcmp 선언부
 - 사용자 
   - $: 일반 유저
@@ -216,6 +254,8 @@
   - fscanf, fprintf: scanf, printf 사용법과 동일하나, 파일 포인터 매개변수만 추가하면 됨 
     - fprintf(fp,”%s”,buf); 파일로 내보냄 / fscanf(fp,”%s”,str); 파일 내용 받아옴
   - fclose(fp);  // 반드시 닫아줘야
+  - sprintf: 형식화된 데이터를 버퍼로 출력
+    - sprintf(buf, “%f”,dist);	// double타입(%f)인 dist값을 buf로 // null 자동 추가
 - c와 c# 차이 
     - c#에서 while 안에는 bool, c는 0외 숫자(true)/ 0(false)도 가능 
     - c#에서는 null → c에서는 NULL
