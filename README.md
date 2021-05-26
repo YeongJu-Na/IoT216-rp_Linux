@@ -70,6 +70,7 @@
     - pinMode(wPi번호,OUTPUT)
     - digitalWrite(wPi번호, HIGH/LOW)
     - gcc -o led LEDcontrol.c -lwiringPi  // -l: link옵션
+    - delay
 - Lect 5: ADC/DAC(YL-40)모듈(PCF8591T)- 조도센서(R7), 온도센서(R6), 가변 저항(volumn)
   - 사용
     - raspberry pi configuration > i2c: enable로 > reboot
