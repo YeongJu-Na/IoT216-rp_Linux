@@ -240,6 +240,17 @@
 - 사용자 
   - $: 일반 유저
   - #: root권한
+- 메모리에 값을 저장하는 방식
+  - 빅 엔디안: 큰 단위부터 메모리에 적는 방식
+    - 부호비트 확인이 빠르다 → 최상위비트에 적으므로
+    - 네트워크 통신 시 헤더파일은 가장 앞에 붙음 → 확인이 빨라 네트워크 통신 시 사용
+  - 리틀 엔디안: 작은 단위부터 메모리에 적는 방식
+    - 연산 시 뒷자리부터 하므로 연산이 빠름
+    - 일반 pc는 보통 이 방식으로 구현되어 있다 → 연산 많이 하므로
+- 네트워크 통신 시, 전송 측은 빅엔디안, 수신 측은 리틀 엔디안이면 데이터가 달라져 처리x
+  - 수신 측은 받은 데이터를 뒤집어서 처리해야 → read(), write()함수 내 구현되어 잇음
+  - 우리는 통신을 위해 ip, port만 빅 엔디안으로 뒤집으면 됨
+    - htol, htos → h: 리틀 엔디안 →(to) n:network, l: long, ip는 4byte / s:short, port는 2byte
 ------------
 ### C언어
 - #include <conio.h> 유닉스에서x → key event x 
@@ -273,6 +284,7 @@
   - free
     - 메모리 누수 발생 가능성: free(메모리 개방)
     - 쓰고 안닫으면? segmentation error → 그냥 모든 ㅇㅔ러인가?
+  - memset: 데이터 초기화
   - size
     - default는 1바이트 = 1 char(1byte)
     - char** ar2 = malloc(cnt(str)*sizeof(char*));	// 포인터 변수의 크기(32bit면 4바이트)
@@ -280,3 +292,14 @@
     - ⇒ 코드영역과 스택영역은 로컬 데이터 공유
 - 사용자 정의 함수에서 만든 지역변수를 리턴 → stack영역(재사용영역)
     - 리턴 시, clear되서 null됨
+- #include <sys/socket.h>
+  - int socket(int domain, int type, int protocol)
+    - SOCK_STREAM: 스트림 소켓(tcp)
+    - SOCK_DGRAM: 데이터그램(udp)
+  - htol, htos → h: 리틀 엔디안 →(to) n:network, l: long, ip는 4byte / s:short, port는 2byte
+  - int bind(int sockfd, struct sockaddr * myaddr, socklen_t addrlen);
+    - sockfd: 소켓 파일 디스크립터(socket함수의 반환값)
+    - * myaddr: 주소를 저장하는 구조체
+  - int listen(int sockfd, int backlog)
+    - backlog: 연결 요청 대기 큐의 크기 설정
+  - int accpet, read/write, close
