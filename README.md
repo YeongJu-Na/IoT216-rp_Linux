@@ -1,6 +1,6 @@
 # IoT216-rp_Linux
 ### 실습 내용
-- Lect 1, 2: 라즈베리파이 시작하기
+- Lect 1, 2. 라즈베리파이 시작하기
   - sd카드 포맷
   - raspbian(raspberry Pi OS) 다운 → sd카드에 os porting, rasperry pi에 삽입
   - KBD/Mouse/Monitor 라즈베리파이에 연결 및 전원 인가
@@ -28,13 +28,13 @@
     - 윈도우즈 파일탐색기에서 라즈비안 ip입력→ \\192.168.0.2(앞에 백슬래시 두개 필요)
   - >> 오류: failed to restart smbd.service unit not found 
     - sudo apt-get remove samba 후에 다시 깔기 → sudo apt-get install samba → restart 성공~!
-- Lect 2: gcc(GNU Compiler Collection)
+- Lect 2. gcc(GNU Compiler Collection)
   - hello.c 파일 만들기 --> gcc -o hello hello.c
     - 옵션: -o, output, hello.c 컴파일하여 실행파일 생성 
     - ls -al해보면 녹색으로 hello파일 볼 수 있으며 기존 hello.c와 비교해서 x권한, 즉 실행 가능함이 
   - hello실행시키기 --> ./hello 
     - ./는 현재 경로로, 파일 실행시키기 위해서는 해당 파일 경로와 파일명을 함께 작성해야 함
-- Lect 3: gcc, GetToken함수 만들기
+- Lect 3. gcc, GetToken함수 만들기
   - SSH: secure shell(보안 쉘)
     - 원격지 호스트 커멩서 접속 위해 사용되는 인터넷 프로토콜 --> 기본적으로 CLI상에서 작업, 기본 포트 22
     - 기존 유닉스 시스템 쉘에 원격 접속 시 사용되던 텔넷은 암호화 없어 계정정보 탈취 위험
@@ -43,7 +43,7 @@
   - VNC로 라즈베리파이 내부에 GetToken 함수만들기
     - char ** 
     - FILE*
-- Lect 4: getToken, makefile, wiringPi
+- Lect 4. getToken, makefile, wiringPi
   - getToken
     - 문자열 str을 deli로 구분하여 idx위치의 문자열 반환
     - >> 오류: 반환할 문자열을 담을 char *를 함수 내에서 malloc으로 생성 후 반환 시 null
@@ -71,7 +71,7 @@
     - digitalWrite(wPi번호, HIGH/LOW)
     - gcc -o led LEDcontrol.c -lwiringPi  // -l: link옵션
     - delay
-- Lect 5: ADC/DAC(YL-40)모듈(PCF8591T)- 조도센서(R7), 온도센서(R6), 가변 저항(volumn)
+- Lect 5. ADC/DAC(YL-40)모듈(PCF8591T)- 조도센서(R7), 온도센서(R6), 가변 저항(volumn)
   - 사용
     - raspberry pi configuration > i2c: enable로 > reboot
   - wiringPiI2C.h include
@@ -112,7 +112,7 @@
     - 측정된 거리에 따라 150us~25ms 의 펄스를 Echo핀을 통해 출력 시킴
     - 측정 거리 계산 Echo핀 출력 시간(us) * 0.17 = 거리(mm)
     - 8개의 40kHz 펄스 발생시킴 --> trig핀으로 신호 인가 후, 실제 센서가 신호 보낼 시간만큼 기다려야 25us*8(200us)만큼 delay
-- Lect 7: gyroSensor
+- Lect 7. gyroSensor
   - 핀 연결: vcc, gnd, sda(GPIO2-핀넘버 8), scl(GPIO3-핀넘버, 5)
   - 변수 선언
     - i2cAddr: i2cdetect -y 1 ⇒ 주소(68)확인
@@ -128,10 +128,10 @@
     - → 그 결과는 2byte이므로 short타입으로 반환 (int:4byte, short: 2byte)(음수판단위해)
     - 각속도 x축값: double x1 = (short타입 반환값)/16384.; // 가속도 값은 /131.
     - → 나누는 값에 “.”붙여야 소수점(double)형태로 값 반환됨
-- Lect 8: 초음파 센서
+- Lect 8. 초음파 센서
   - 장애물 거리에 따라 다른 색의 LED ON
     - LED는 서로 다른 GPIO에 연결, 각 led wPI를 배열로 
-- Lect 9: 소켓 통신 - 라즈베리파이 센서 정보 전송( direct communication(직접 소켓을 이용))
+- Lect 9. 소켓 통신 - 라즈베리파이 센서 정보 전송( direct communication(직접 소켓을 이용))
   - 헤더   
     - sys/socket.h : BSD소켓의 핵심 함수와 데이터 구조
     - arpa/inet.h: 프로토콜 및 호스트 이름을 숫자 주소로 변환→ 로컬데이터와 dns검색
@@ -141,7 +141,7 @@
     - 전송을 위한 버퍼: char buf[1024];
     - socket핸들 : int sock =socket(AF_INET, SOCK_STREAM,0);
     - →  스트림 방식으로 인터넷 망에 접속하기 위한 소켓을 생성
-  - bind
+  - 주소 
     - address family→ AF_INET   // 주소체계로서 ipv4를 사용하는 인터넷 망에 접속
     - ip→ inet_pton(): // 사람이 알아보기 쉬운 텍스트형태의 ip 주소를 binary 형태로 변환
     - → %socknfo.sin_addr.s_addr
@@ -165,7 +165,19 @@
     - → 이전 c# 실습과 달리 리눅스에서 스레드는 생성(new thread())과 동시에 실행(thread.Start())
     - pthread_join: 종료, 스레드 종료까지 기다림
     - 스레드 실행 시, -lpthread도 있어야→ gcc -o tcp tcp.c -lwiringPi -lpthread
-
+- Lect 10. tcpServer, udp
+  - tcpServer
+    - bind: bind(sock, (struct sockaddr*)&sockinfo, sizeof(sockinfo));
+    - listen: listen(sock,100);
+    - accept: sock_cli = accept(sock,(struct sockaddr*)&sockinfo_cli, &n);
+    - --> n: int, sizeof(sockinfo_cli)
+    - --> blocking
+  - 스레드 사용 위해 sock_cli flag nonblocking으로
+  - > 오류: send실습 시 실행파일명을 tcps로 만듦 → 스레드로 receive 실습 때 gcc에서 tcpS로 만들고 이전 실행파일명으로 잘못 실행(./tcps) ⇒ ls -al로 찾아보고 나서 앎….
+  - udp
+    - SOCK_DGRAM
+    - sendto  --> send는 tcp로, send의 인수들 + 주소를 저장하는 구조체, 구조체 크기
+    - winform으로 만들었던 udp server 열고 전송하기
 ---------------
 ### 이론
 - 컴파일 과정
