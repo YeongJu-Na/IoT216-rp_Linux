@@ -131,7 +131,7 @@
 - Lect 8. 초음파 센서
   - 장애물 거리에 따라 다른 색의 LED ON
     - LED는 서로 다른 GPIO에 연결, 각 led wPI를 배열로 
-- Lect 9. 소켓 통신 - 라즈베리파이 센서 정보 전송( direct communication(직접 소켓을 이용))
+- Lect 9. tcp Client 소켓 통신 - 라즈베리파이 센서 정보 전송( direct communication(직접 소켓을 이용))
   - 헤더   
     - sys/socket.h : BSD소켓의 핵심 함수와 데이터 구조
     - arpa/inet.h: 프로토콜 및 호스트 이름을 숫자 주소로 변환→ 로컬데이터와 dns검색
@@ -165,7 +165,7 @@
     - → 이전 c# 실습과 달리 리눅스에서 스레드는 생성(new thread())과 동시에 실행(thread.Start())
     - pthread_join: 종료, 스레드 종료까지 기다림
     - 스레드 실행 시, -lpthread도 있어야→ gcc -o tcp tcp.c -lwiringPi -lpthread
-- Lect 10. tcpServer, udp
+- Lect 10. tcp Server, udp Client
   - tcpServer
     - bind: bind(sock, (struct sockaddr*)&sockinfo, sizeof(sockinfo));
     - listen: listen(sock,100);
