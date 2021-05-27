@@ -1,0 +1,97 @@
+//////////////////////////////////////////// tcp Server
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <pthread.h>
+#include <wiringPi.h>
+
+char *IP = "192.168.0.52";
+int PORT = 9001;
+int sock, sock_cli;
+struct sockaddr_in sockinfo, sockinfo_cli;	// 구조체 생성
+
+void *readProc();
+
+int main(){
+	char buf[1024];
+	pthread_t readThread;
+	sock = socket(AF_INET, SOCK_STREAM,0);	
+	
+	//sockinfo - 구조체 멤버변수에 값 넣기
+	sockinfo.sin_family = AF_INET;
+	// h: 리틀 앤디안, -->(to) s(short), l(long)
+	sockinfo.sin_addr.s_addr = htonl(INADDR_ANY);	// ip: 4byte, 
+	sockinfo.sin_port = htons(PORT);				//port: 2byte
+	
+	bind(sock,(struct sockaddr*)&sockinfo, sizeof(sockinfo));
+	listen(sock,100);
+	
+	int n = sizeof(sockinfo_cli);
+	//클라이언트용 sockinfo
+	sock_cli = accept(sock,(struct sockaddr*)&sockinfo_cli,&n);	// blocking
+	int k=fcntl(sock_cli, F_SETFL,0);  // F_SETFL: setting flag, 현재 소켓의 flag 가져오기
+	fcntl(sock_cli, F_SETFL, k | O_NONBLOCK);	//Output nonbolck
+	pthread_create(&readThread, NULL, readProc, NULL);
+	
+	while(1){
+		//printf("Input text > ");
+		scanf("%s",buf);
+		if(buf[0] == 'q') break;
+		send(sock_cli,buf,strlen(buf),0);
+		/*
+		int i=recv(sock_cli,buf,1024,0);	// blocking
+		if(i>0) buf[i]=0;
+		if(buf[0]=='q') break;
+		printf("%s\n",buf);*/
+	}
+	close(sock);
+	
+	pthread_join(readThread, NULL);	// 스레드 종료까지 기다림
+	return 0;
+}
+void *readProc(){
+	int i;
+	char buf[1024];
+	while(1){
+		i=recv(sock_cli,buf,1024,0);	// blocking
+		if(i>0){
+			buf[i]=0;
+			printf("\nReceived >> %s",buf);
+		}
+		delay(500);
+	}
+	return NULL;
+}
+/////////////////////////////////////////////////////// udp client
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+
+char *IP = "192.168.0.52";
+int PORT = 9200;
+struct sockaddr_in udp_info;
+int sock;
+
+
+int main(){
+	
+	char buf[512];
+	sock = socket(AF_INET, SOCK_DGRAM, 0);
+	udp_info.sin_family=AF_INET;
+	inet_pton(AF_INET, IP, &udp_info.sin_addr.s_addr);
+	udp_info.sin_port=htons(PORT);
+	
+	while(1){
+		printf("Input text > ");
+		scanf("%s",buf);
+		sendto(sock, buf, strlen(buf),0,(struct sockaddr*)&udp_info, sizeof(udp_info));
+	}	
+	return 0;
+}
