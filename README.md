@@ -314,4 +314,4 @@
     - * myaddr: 주소를 저장하는 구조체
   - int listen(int sockfd, int backlog)
     - backlog: 연결 요청 대기 큐의 크기 설정
-  - int accpet, read/write, close
+  - int accept, read/write, close
