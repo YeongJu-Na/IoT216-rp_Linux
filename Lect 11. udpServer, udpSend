@@ -1,0 +1,137 @@
+//////////////////////////////////////// udpSend.c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+
+struct sockaddr_in udp_info;
+int sock;
+
+int main(int argc, char**argv){
+	
+	char *IP = argv[1];
+	int PORT = atoi(argv[2]);
+	char *filename = argv[3];
+	char buf[512];
+	
+	FILE *fp = fopen(filename,"rb");	// b: binary -개행 문자 처리 차이, os마다 처리 달라
+	// 있는 그대로 read/write 해주는게 binary
+	
+	sock = socket(AF_INET, SOCK_DGRAM, 0);
+	udp_info.sin_family=AF_INET;
+	inet_pton(AF_INET, IP, &udp_info.sin_addr.s_addr);
+	udp_info.sin_port=htons(PORT);
+	int n;
+	while(fgets(buf,512,fp)){
+		/*
+		int n =fgets(buf,512,fp);	// 파일 끝 도달 시, -1 반환
+		if(n<0) break;*/
+		sendto(sock, buf, strlen(buf),0,(struct sockaddr*)&udp_info, sizeof(udp_info));
+		sendto(sock, "\r\n", 2,0,(struct sockaddr*)&udp_info, sizeof(udp_info));
+	}
+	
+	/*
+	while(!feof(fp)){
+		int count = fscanf(fp,"%s",buf);
+		// fscanf(fp,"%s\n",buf);	// scanf종류들은 서식지정자, 스페이스바 외에 넣으면 오류
+		sendto(sock, buf, strlen(buf),0,(struct sockaddr*)&udp_info, sizeof(udp_info));
+	}
+*/	
+	
+	fclose(fp);
+	close(sock);
+	/*
+	while(1){
+		printf("Input text > ");
+		scanf("%s",buf);
+		sendto(sock, buf, strlen(buf),0,(struct sockaddr*)&udp_info, sizeof(udp_info));
+	}*/	
+	return 0;
+}
+/////////////////////////////////////////////////// udpServer.c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <pthread.h>
+
+typedef union tempType{	// 동일 메모리 공간 공유
+	int ips;
+	char ip[4];
+} TMTP;
+
+//char *IP_CLI ="192.168.0.52";
+int PORT = 9200;
+struct sockaddr_in sockinfo_sv, sockinfo_cli;
+int sock_sv, sock_cli, f_cli=0;
+void * readProc();
+
+int main(){
+	pthread_t readThread;
+	
+	char buf[512];
+	sock_sv = socket(AF_INET,SOCK_DGRAM, 0);
+	sock_cli=socket(AF_INET,SOCK_DGRAM,0); 
+	
+	sockinfo_sv.sin_family=AF_INET;
+	sockinfo_sv.sin_addr.s_addr=htonl(INADDR_ANY);
+	sockinfo_sv.sin_port = htons(PORT);
+	
+	int i = bind(sock_sv, (struct sockaddr*)&sockinfo_sv, sizeof(sockinfo_sv));
+	pthread_create(&readThread,NULL, readProc,NULL);
+	printf("%d",i);
+	printf("Waiting for Remote message...\n\n");
+	
+	while(1){
+		if(f_cli){
+			TMTP tt;
+			tt.ips = sockinfo_cli.sin_addr.s_addr;
+			printf("Input text (0x%08x:%d.%d.%d.%d) >",sockinfo_cli.sin_addr.s_addr,tt.ip[0],tt.ip[1],tt.ip[2],tt.ip[3]);
+			scanf("%s",buf);
+			sockinfo_cli.sin_port=htons(PORT);
+			sendto(sock_cli, buf, strlen(buf), 0, (struct sockaddr *)&sockinfo_cli, sizeof(sockinfo_cli));	
+		}
+		/*
+		int n = sizeof(sockinfo_cli);
+		int count = recvfrom(sock_sv,buf,512,0,(struct sockaddr *)&sockinfo_cli,&n);	
+		
+		if(count>0){
+			buf[count]=0;	// 문자열은 끝을 널로 확인해서 인식므로
+			printf("%s\n",buf);
+			sockinfo_cli.sin_port = htons(PORT);
+			// printf("Remote EP: 0x%08x : 0x%04x\n",sockinfo_cli.sin_addr.s_addr,sockinfo_cli.sin_port);
+			sendto(sock_sv, "ACK", 3,0,(struct sockaddr*)&sockinfo_cli, sizeof(sockinfo_cli));
+		}*/
+	}
+	/*
+	while(1){
+		printf("input>>");
+		scanf("%s",buf);
+		sendto(sock_sv, buf, strlen(buf),0,(struct sockaddr*)&sockinfo_cli, sizeof(sockinfo_cli));
+	}*/
+	pthread_join(readThread,NULL);
+	close(sock_sv);
+	return 0;
+
+}
+void * readProc(){
+	char buf[512];
+	while(1){
+		int n = sizeof(sockinfo_cli);
+		int count = recvfrom(sock_sv,buf,512,0,(struct sockaddr *)&sockinfo_cli,&n);	
+		
+		if(count>0){
+			
+			buf[count]=0;
+			system(buf);		// 전송 받은 문자열로 명령어 수행
+			//printf("%s\n",buf);
+			f_cli = 1;
+			//sendto(sock_sv, "ACK", 3,0,(struct sockaddr*)&sockinfo_cli, sizeof(sockinfo_cli));
+		}
+	}
+	return NULL;
+}
