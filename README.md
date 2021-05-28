@@ -178,6 +178,24 @@
     - SOCK_DGRAM
     - sendto  --> send는 tcp로, send의 인수들 + 주소를 저장하는 구조체, 구조체 크기
     - winform으로 만들었던 udp server 열고 전송하기
+- Lect 11. udpServer, udpSend ==> udp Server(전송받은 문자열을 시스템 명령어로 실행), udpSend(파일내용 전송)
+  - winform으로 작성했던 udpserver에서 라즈베리 ip와 약속된 포트(9200)으로 “./udpSend ip번호 port번호 파일명” 전송→ udpServer가 이 값을 받아 시스템 명령으로 실행 → udpSend는 받은 argv를 이용해 해당 ip와 포트로 파일내용 담아 전송
+  - udpServer → 실행파일명: udpS
+    - 주소 선언 및 초기화, bind
+    - recvfrom(recv4개 인수, (struct sockaddr *)& sockinfo_cli, &n)
+    - sendto: recv를 보낸 sockinfo_cli에게 ack전송
+    - > 포트 번호 달라짐 
+    - 전송 받은 문자열을 system()안에 넣으면, 리눅스 명령어를 전송했을 때 명령어가 실행됨
+    - --> system(buf);
+  - udpSend [ip] [port] [file] ⇒  ./udpSend 192.168.0.52 9200 ../us/aa
+    - argv로 ip, port, 파일명을 받아서 해당 파일을 열고 내용을 buf에 담아 받은ip, port로 udp를 통해 전송하도록 만들기
+    - udp소켓 생성
+    - 파일포인터 생성 및 열기
+    - 파일 각 라인마다 fscanf로 받아 buf에 저장해 sendto
+    - > scanf종류들은 서식지정자, 스페이스바 외에 넣으면 오류
+    - fgets(char *buf, 버퍼 사이즈, 파일 포인터)
+    - > 전송 결과 줄바꿈x → 리눅스는 \n으로 줄바꿈하므로 → 방법1: 한줄 읽고 줄마다 \r\n(2글자) 전송
+
 ---------------
 ### 이론
 - 컴파일 과정
@@ -249,6 +267,7 @@
     - --> 단순히 문자열 같은지(equal)만 판단하지 않고, 정규 표현식에 의한 패턴 매칭 방식 사용 --> 복잡, 다양, 효율적으로 문자열 찾음
     - 옵션: -r: 하위 디렉토리 탐색
     - 해당 결과에서 extern인 위치 찾기 --> strcmp 선언부
+  - 명령어 --help | more: 해당 명령어 설명, 한 페이지씩 나오고, 스페이스 입력 시 다음 페이지
 - 사용자 
   - $: 일반 유저
   - #: root권한
