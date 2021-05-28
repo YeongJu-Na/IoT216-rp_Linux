@@ -184,7 +184,7 @@
     - 주소 선언 및 초기화, bind
     - recvfrom(recv4개 인수, (struct sockaddr *)& sockinfo_cli, &n)
     - sendto: recv를 보낸 sockinfo_cli에게 ack전송
-    - > 포트 번호 달라짐 
+    - > 포트 번호 달라짐 --> 다시 보내려면 미리 약속한 포트번호 다시 지정
     - 전송 받은 문자열을 system()안에 넣으면, 리눅스 명령어를 전송했을 때 명령어가 실행됨
     - --> system(buf);
   - udpSend [ip] [port] [file] ⇒  ./udpSend 192.168.0.52 9200 ../us/aa
