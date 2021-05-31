@@ -195,7 +195,11 @@
     - > scanf종류들은 서식지정자, 스페이스바 외에 넣으면 오류
     - fgets(char *buf, 버퍼 사이즈, 파일 포인터)
     - > 전송 결과 줄바꿈x → 리눅스는 \n으로 줄바꿈하므로 → 방법1: 한줄 읽고 줄마다 \r\n(2글자) 전송
-
+- Lect 12. apache
+  - apt-get install apache2→ 웹 브라우저에 라즈베리 아이피주소 입력 
+  - var/www/html/index.html
+    - su권한으로 해당 위치의 index.html 권한 확인해보면 일반 유저가 변경 불가 → 권한 바꾸기
+    - chmod
 ---------------
 ### 이론
 - 컴파일 과정
