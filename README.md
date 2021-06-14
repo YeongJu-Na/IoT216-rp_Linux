@@ -200,6 +200,13 @@
   - var/www/html/index.html
     - su권한으로 해당 위치의 index.html 권한 확인해보면 일반 유저가 변경 불가 → 권한 바꾸기
     - chmod
+- Project. motor control with ultrasonic and mpu 6050 + Arduino uno with DC motors
+  - 아두이노 ide (sketch): 
+  - ultrasonic 여러 개로부터 거리 계산하는 스레드 생성
+  - mpu 6050의 가속도, 각속도 센서 값으로 회전 각도 계산하는 스레드
+  - main thread
+
+
 ---------------
 ### 이론
 - 컴파일 과정
