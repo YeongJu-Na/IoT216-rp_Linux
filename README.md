@@ -1,4 +1,32 @@
 # IoT216-rp_Linux
+### Final Project - RaspberryPi(Sensors for motor control & Comm), Arduino uno(DC Motors)
+- Day 1 (6/1)
+  - rc카 조립 --> rc: radio control(무선 조종)
+    - 4 DC Motors 
+    - L293D 모터 제어 쉴드(SZH-EK003)
+    - Arduino uno
+- Day 2 (6/2) - 라즈베리파이에 ubuntu깔기 : ros를 사용하기 위해?
+  - 라즈베리파이용 ubuntu img 다운, sd카드 포맷, 라즈베리파이 imager설치 --> 굽기
+  - 패스워드 설정 및 네트워크 설정
+    - /etc/netplan/ 에 있는 50-cloud-init.yaml 파일 수정: 와이파이 이름과 패스워드 작성해넣음
+  - 패키지 업데이트 및 업그레이드
+  - ssh설치 및 진행: sudo apt-get install ssh--> sudo systemctl enable/start/status ssh
+  - gui설치
+  - ros설치
+    - 소스리스트, 키 등록 --> ros melodic설치 (ydlidar X2 레퍼런스를 위해?) --> ros초기화
+    - sudo rosdep init --> rosdep: 시스템 의존성 설치 위한 cmd 도구
+    - > 오류: rosdep명령어 찾을 수 없음 --> sudo apt-get install python-pip
+    - pip: ros에 있는 많은 툴들이 사용, 파이썬 기반의 코드와 함께 사용되는 패키지 관리 도구
+  - ros: robot OS 
+    - melodic: 12번째 ROS 배포 버전, 우분투 18.04버전을 타겟 
+- Day 3 (6/4) - Arduino에 모터 제어 코드 작성
+  - AFMotor.h: L293D 모터 드라이브 라이브러리
+  - AF_DCMotor: DC 모터 객체 --> AF_DCMotor motor_1(1);
+    - setSpeed(): 모터 속도 설정
+    - run: 모터 상태 설정 --> 괄호 안에 FORWARD, BACKWARD, RELEASE
+  - > Issue: setSpeed값 300 일 때 모터 안돌아감 --> 모터 제어 쉴드의 핀 비트 8bit, 최대 255 가능하므로 
+
+--------
 ### 실습 내용
 - Lect 1, 2. 라즈베리파이 시작하기
   - sd카드 포맷
@@ -200,12 +228,6 @@
   - var/www/html/index.html
     - su권한으로 해당 위치의 index.html 권한 확인해보면 일반 유저가 변경 불가 → 권한 바꾸기
     - chmod
-- Project. motor control with ultrasonic and mpu 6050 + Arduino uno with DC motors
-  - 아두이노 ide (sketch): 
-  - ultrasonic 여러 개로부터 거리 계산하는 스레드 생성
-  - mpu 6050의 가속도, 각속도 센서 값으로 회전 각도 계산하는 스레드
-  - main thread
-
 
 ---------------
 ### 이론
@@ -246,6 +268,7 @@
     - accelerometer raw data / 16384	// 65536=2^16, 16384=2^14, 즉 유효 자릿수가 14비트
     - gyroscope raw data/131
 - VDD: Drain, VCC: Collector
+
 - 리눅스 명령어
   - cd: change directory, 디렉토리 이동
     - ~: 홈디렉토리로 바로 이동 --> cd ~
@@ -267,6 +290,10 @@
     - remove
   - exit
   - 버전 확인하기 ex) gcc -v  // gcc 컴파일러 버전 확인
+  - systemctl
+    - systemd(system daemon): unix시스템이 부팅 후 가장 먼저 생성된 후에 다른 프로세스를 실행하는 init역할 대체
+    - --> 용도: 프로세스 관리, 유닛으로 서비스를 제어하는 시스템 자원 통합 관리 도구
+    - systemctl start 서비스명: 서비스 시작
   - - redirection: 리눅스 스트림의 방향 조정 (stream개념 확실히 잡아야- c/c++에서 stdin, stdout)
     - >: 명령의 결과를 파일로 저장
     - >>: 명령 결과를 파일에 추가
